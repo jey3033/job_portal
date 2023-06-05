@@ -1,0 +1,111 @@
+.bg-pg {
+    background-color: #ffc619;
+}
+
+.log-badge {
+    margin-top: -20px;
+    top: 78px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Width Manipulation */
+.w-93 {
+    width: 93% !important;
+}
+
+.col-w-4 {
+    width: 30% !important;
+}
+
+.w-px-200 {
+    width: 200px;
+}
+
+/* Image Manipulation */
+.prev-image {
+    max-width: 300px;
+}
+
+.round-300 {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+}
+
+.round-prof {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.prof-photo {
+    border-radius: 50%;
+    width: 300px;
+    height: 300px;
+}
+
+.small-icon {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+}
+
+.icon-prof {
+    width: 10px;
+    height: 10px;
+}
+
+/* Text Manipulation */
+.text-color-black {
+    color: black;
+}
+
+/* Select2 Manipulation */
+.select2-container--default .select2-selection--single {
+    height: 37.6px;
+}
+
+/* Header Manipulation */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: #ffffff;
+    z-index: 2;
+}
+
+/* Loader Manipulation */
+#loader {
+    position: absolute;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Padding Manipulation */
+.pl-20 {
+    padding-left: 20px;
+}
+
+/* Pointer Manipulation */
+.clickable {
+    cursor: pointer;
+}
+
+/* Badge Notification */
+.icon-badge {
+    font-size: larger;
+    vertical-align: bottom;
+    text-align: center;
+}
+
+.number-badge {
+    left: 80% !important;
+    top: 14px !important;
+}
