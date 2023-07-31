@@ -19,7 +19,7 @@
 <body>
     @include('include/navigation')
 
-    <div id="all-job" class="card row g-2 mx-4" style="margin-top:74px">
+    <div id="all-job" class="card row g-2 mx-4 mb-3" style="margin-top:74px">
         <div class="card-header fs-2">
             <h1 class="float-start">{{ $job_data->title }}</h1>
             @if ($check)
@@ -51,6 +51,34 @@
         @endif
     </div>
     
+    @if (Auth::user()->backend)
+    <div class="card row mx-4">
+        <div class="card-header fs-2">
+            <h1 class="float-start">Pendaftar</h1>
+        </div>
+        <div class="card-body">
+            @foreach ($job_data->applier() as $item)
+                <div class="accordion" id="row-applier{{ $item->id }}">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="header{{ $item->id }}">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#biodata{{ $item->id }}" aria-expanded="false" aria-controls="biodata{{ $item->id }}">
+                        <img src="{{ $item->application()->profile_path }}" class="small-icon me-2"> {{ $item->name }}
+                      </button>
+                    </h2>
+                    <div id="biodata{{ $item->id }}" class="accordion-collapse collapse" aria-labelledby="header{{ $item->id }}" data-bs-parent="#row-applier{{ $item->id }}">
+                      <div class="accordion-body">
+                        {{ $item->application()->user_short_desc }}<br>
+                        <a href="/user/{{ substr($item->email, 0, strpos($item->email, '@')) }}/job/{{ $job_data->id }}">See Profile</a>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     @include('include/footer')
 
     <script>
@@ -91,15 +119,23 @@
                 $.ajax({
                     type: "get",
                     url: "/job/apply/{{ $job_data->job_path }}",
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'job applied'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location = '/dashboard';
-                            }
-                        });
+                    statusCode: {
+                        200: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'job applied'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location = '/dashboard';
+                                }
+                            });
+                        },
+                        412: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                text: response.responseText
+                            });
+                        }
                     }
                 });
             });

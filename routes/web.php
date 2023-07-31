@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobOpeningController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,7 @@ Route::controller(Controller::class)->group(function() {
     Route::get('/logout', 'logout');
     Route::get('/register', 'register');
     Route::post('/user/store', 'frontendregister');
+    Route::get('/user/{email}/job/{job}', 'userprofile');
 });
 
 Route::controller(JobOpeningController::class)->group(function() {
@@ -42,4 +44,9 @@ Route::controller(JobOpeningController::class)->group(function() {
     Route::get('/job/activate/{uuid}','activate');
     Route::get('/job/done/{uuid}','done');
     Route::get('/job/apply/{uuid}','apply');
+});
+
+Route::controller(JobApplicationController::class)->group(function() {
+    Route::get('/user/profile', 'index');
+    Route::post('/user/profile/store', 'store');
 });

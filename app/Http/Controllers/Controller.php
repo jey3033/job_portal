@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Charts\jobChart;
 use App\Models\BackendUser;
+use App\Models\JobApplication;
 use App\Models\JobApply;
 use App\Models\JobOpening;
 use App\Models\User;
@@ -95,5 +96,12 @@ class Controller extends BaseController
             //throw $th;
             return response($th->getMessage(),422);
         }
+    }
+
+    public function userprofile($email, $job) {
+        $data = User::where("email", "LIKE", "{$email}%")->first();
+        $job_data = JobOpening::where("id", $job)->first();
+        // dd($data);
+        return view("userview", ['data' => $data, 'job' => $job_data]);
     }
 }

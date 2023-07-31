@@ -41,4 +41,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function application() {
+        return JobApplication::where("user_id", $this->id)->first();
+    }
 }

@@ -46,13 +46,6 @@ n<!DOCTYPE html>
     </div>
     @include('include/footer')
     <script>
-        $('.summernote').summernote({
-            inheritPlaceholder: true,
-            tooltip: false
-        })
-        if ($('.note-btn').attr('data-toggle')) {
-            $('.note-btn').attr('data-bs-toggle', $('.note-btn').attr('data-toggle'));                    
-        }
 
         $('#save-btn').click(function (e) { 
             e.preventDefault();
@@ -62,6 +55,17 @@ n<!DOCTYPE html>
                 data: $('#new-job').serializeArray(),
                 success: function (response) {
                     window.location = "/job";
+                },
+                error: function (jqXHR, textStatus, errorThrown) { 
+                    Swal.fire({
+                        icon: 'error',
+                        text: jqXHR.responseJSON.message
+                    }).then((result) => {
+                        $.each(jqXHR.responseJSON.errors, function (indexInArray, valueOfElement) { 
+                            $(`#${indexInArray}`).addClass('is-invalid');
+                            $(`#${indexInArray}`).addClass('mb-0');
+                        });
+                    })
                 }
             });
         });

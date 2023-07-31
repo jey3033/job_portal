@@ -9,6 +9,17 @@ $(document).ready(function () {
         },
     });
 
+    $(".summernote").summernote({
+        inheritPlaceholder: true,
+        tooltip: false,
+    });
+    if ($(".note-btn").attr("data-toggle")) {
+        $(".note-btn").attr(
+            "data-bs-toggle",
+            $(".note-btn").attr("data-toggle")
+        );
+    }
+
     // response log
     $(document).on("click", ".log-response", function (e) {
         e.preventDefault();
@@ -66,15 +77,6 @@ $(document).ready(function () {
     });
 
     // Initialization Select2
-    $("#supervisor-select").select2({
-        allowClear: true,
-        placeholder: "Pilih Supervisor",
-    });
-
-    $("#division-select").select2({
-        allowClear: true,
-        placeholder: "Pilih Divisi",
-    });
 
     $(document).ajaxComplete(function (event, xhr, settings) {
         $("#loader").addClass("d-none");

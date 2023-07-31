@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\JobOpening;
 use App\Http\Requests\StoreJobOpeningRequest;
 use App\Http\Requests\UpdateJobOpeningRequest;
+use App\Models\JobApplication;
 use App\Models\JobApply;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class JobOpeningController extends Controller
@@ -81,7 +83,7 @@ class JobOpeningController extends Controller
         $job = JobOpening::where('job_path', $uuid)->first();
         $userid = Auth::user()->id;
 
-        $check = JobApply::whereRaw("job_id = $job->id AND user_id = $userid");
+        $check = JobApply::whereRaw("job_id = $job->id AND user_id = $userid")->count();
         return view('jobdetail', ['job_data' => $job, 'check' => $check]);
     }
 
@@ -168,6 +170,10 @@ class JobOpeningController extends Controller
     public function apply(String $uuid) {
         try {
             $jobData = JobOpening::where('job_path', $uuid)->first();
+            $jobApp = JobApplication::where('user_id', Auth::user()->id)->first();
+            if (!$jobApp) {
+                return response('You must complete your profile before applied', 412);
+            }
             $apply = new JobApply();
             $apply->user_id = Auth::user()->id;
             $apply->job_id = $jobData->id;
@@ -197,5 +203,17 @@ class JobOpeningController extends Controller
 
     public function get_active() {
         return JobOpening::where('active',0)->paginate();
+    }
+
+    public function pick_candidates() {
+        
+    }
+
+    public function reject_candidate($job, $user) {
+        $application = JobApply::where("job_id", $job)->where("user_id", $user)->first();
+        $application->status = 2;
+        $application->save();
+
+        return response("Application rejected");
     }
 }
