@@ -27,7 +27,6 @@ class StoreJobApplicationRequest extends FormRequest
         return [
             //
             'user_short_desc' => 'required',
-            'profile_path' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'birthdate' => 'required|date',
             'religion' => 'required',
             'race' => 'required|alpha:ascii',

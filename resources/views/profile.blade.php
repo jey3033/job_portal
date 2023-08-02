@@ -40,7 +40,7 @@
                 <div class="mb-3 row">
                     <label for="user_short_desc" class="form-label col-2 text-end align-self-center mb-0">Deskripsi Singkat</label>
                     <textarea class="form-control col" placeholder="Jelaskan mengenai diri anda secara singkat" name="user_short_desc" id="user_short_desc" rows="3">
-                        {{ $data->user_short_desc }}
+                        {{ $data->get_user_short_desc() }}
                     </textarea>
                 </div>
                 <div class="mb-3 row">
@@ -84,12 +84,42 @@
                     </select>
                 </div>
                 <div class="mb-3 row">
+                    <label for="marital_status" class="form-label col-2 text-end align-self-center mb-0">Status Pernikahan</label>
+                    <select name="marital_status" id="marital_status" class="form-control select2  col-4" placeholder="Pilih Status Pernikahan">
+                        <option value=""></option>
+                        <option value="Lajang"
+                        @if ($data->marital_status == 'Lajang')
+                            selected
+                        @endif 
+                        > Lajang</option>
+                        <option value="Menikah"
+                        @if ($data->marital_status == 'Menikah')
+                            selected
+                        @endif 
+                        > Menikah</option>
+                        <option value="Duda"
+                        @if ($data->marital_status == 'Duda')
+                            selected
+                        @endif
+                        > Duda</option>
+                        <option value="Janda"
+                        @if ($data->marital_status == 'Janda')
+                            selected
+                        @endif
+                        > Janda</option>
+                    </select>
+                    <label for="wedding_date" class="form-label col-2 text-end align-self-center mb-0">Tanggal Menikah</label>
+                    <input type="date" class="form-control col" name="wedding_date" id="wedding_date" placeholder="tanggal lahir" value="{{ $data->wedding_date }}">
+                </div>
+                <div class="mb-3 row">
                     <label for="race" class="form-label col-2 text-end align-self-center mb-0">Suku</label>
                     <input type="text" class="form-control col" name="race" id="race" placeholder="Suku" value="{{ $data->race }}">
                 </div>
                 <div class="mb-3 row">
-                    <label for="phone_number" class="form-label col-2 text-end align-self-center mb-0">No. Telp</label>
-                    <input type="number" class="form-control col" name="phone_number" id="phone_number" placeholder="No. Telp" value="{{ $data->phone_number }}">
+                    <label for="phone_number" class="form-label col-2 text-end align-self-center mb-0">No. HP</label>
+                    <input type="number" class="col-4 form-control" name="phone_number" id="phone_number" placeholder="No. HP" value="{{ $data->phone_number }}">
+                    <label for="residence_phone" class="form-label col-2 text-end align-self-center mb-0">No. Telp Rumah</label>
+                    <input type="number" class="col-4 form-control" name="residence_phone" id="residence_phone" placeholder="No. Telp Rumah" value="{{ $data->residence_phone }}">
                 </div>
                 <div class="mb-3 row">
                     <label for="real_address" class="form-label col-2 text-end align-self-center mb-0">Alamat lengkap domisili</label>
@@ -148,6 +178,11 @@
             $('#religion').select2({
                 allowClear: true,
                 placeholder: "Pilih Agama"
+            })
+            $('#marital_status').select2({
+                allowClear: true,
+                minimumResultsForSearch: Infinity,
+                placeholder: "Pilih Status Pernikahan"
             })
 
             $('#save-btn').click(function (e) { 

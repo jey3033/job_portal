@@ -46,7 +46,7 @@ class JobApplicationController extends Controller
             // $userId = User::where("email", $dataToSave['email'])->first()->user_id;
             $jobAppl = JobApplication::where("user_id", Auth::user()->id)->first();
 
-            $jobAppl->user_short_desc = $dataToSave['user_short_desc'];
+            $jobAppl->user_short_desc = trim($dataToSave['user_short_desc']);
             if ($dataToSave['profile_path']) {
                 $imageName = time().'.'.$dataToSave['profile_path']->extension();  
                 $dataToSave['profile_path']->move(public_path('images'), $imageName);
