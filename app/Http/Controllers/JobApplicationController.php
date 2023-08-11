@@ -28,7 +28,7 @@ class JobApplicationController extends Controller
             $data->user_id = Auth::user()->id;
             $data->save();
         }
-        return view('profile', ['data' => $data]);
+        return view('profile', ['data' => $data, 'Title' => "Biodata Anda"]);
     }
 
     /**
@@ -47,18 +47,28 @@ class JobApplicationController extends Controller
             $jobAppl = JobApplication::where("user_id", Auth::user()->id)->first();
 
             $jobAppl->user_short_desc = trim($dataToSave['user_short_desc']);
-            if ($dataToSave['profile_path']) {
-                $imageName = time().'.'.$dataToSave['profile_path']->extension();  
-                $dataToSave['profile_path']->move(public_path('images'), $imageName);
+            // var_dump($dataToSave['user_short_desc']);die();
+            if (isset($request['profile_path'])) {
+                $imageName = time().'.'.$request['profile_path']->extension();  
+                $request['profile_path']->move(public_path('images'), $imageName);
                 $jobAppl->profile_path = "/images/{$imageName}";
             }
+            $jobAppl->birthplace = $dataToSave['birthplace'];
             $jobAppl->birthdate = $dataToSave['birthdate'];
             $jobAppl->religion = $dataToSave['religion'];
             $jobAppl->race = $dataToSave['race'];
+            $jobAppl->id_city = $dataToSave['id_city'];
+            $jobAppl->tax_number = $dataToSave['tax_number'];
+            $jobAppl->gender = $dataToSave['gender'];
             $jobAppl->phone_number = $dataToSave['phone_number'];
-            $jobAppl->address = $dataToSave['address'];
-            $jobAppl->real_address = $dataToSave['real_address'];
-            // $jobAppl->profile_path = $dataToSave['profile_path'];
+            $jobAppl->residence_phone = $dataToSave['residence_phone'];
+            $jobAppl->address = trim($dataToSave['address']);
+            $jobAppl->real_address = trim($dataToSave['real_address']);
+            $jobAppl->marital_status = $dataToSave['marital_status'];
+            $jobAppl->wedding_date = $dataToSave['wedding_date'];
+            $jobAppl->blood_type = $dataToSave['blood_type'];
+            $jobAppl->height = $dataToSave['height'];
+            $jobAppl->weight = $dataToSave['weight'];
             $jobAppl->facebook = $dataToSave['facebook'];
             $jobAppl->twitter = $dataToSave['twitter'];
             $jobAppl->instagram = $dataToSave['instagram'];

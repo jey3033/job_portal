@@ -20,7 +20,7 @@
     @if (Auth::user()->backend)
     <div class="card row mx-4" style="margin-top:74px">
         <div class="card-header fs-2">
-            <h1 class="float-start">Biodata Anda</h1>
+            <h1 class="float-start">Biodata {{ $data->name }}</h1>
         </div>
         <div class="card-body">
             <form id="biodata-form" enctype="multipart/form-data">
@@ -82,13 +82,15 @@
                         <label for="linkedin" class="form-label col-2 text-end align-self-center mb-0"> <a href="{{ $data->application()->linkedin }}" target="_blank"><i class="fa-brands fa-linkedin"></i> Linkedin</a></label>
                     @endif
                 </div>
-                <div class="mb-3 row">
-                    <button type="button" id="pick" class="btn btn-success">Select as Candidate</button>
-                </div>
-                <div class="mb-3 row">
-                    <button type="button" id="reject" class="btn btn-danger">Reject</button>
-                </div>
             </form>
+        </div>
+        <div class="card-footer text-muted row">
+            <div class="mb-3">
+                <button type="button" id="pick" class="btn btn-success">Select as Candidate</button>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="reject" class="btn btn-danger">Reject</button>
+            </div>
         </div>
     </div>
     <script>

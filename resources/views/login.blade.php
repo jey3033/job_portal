@@ -54,6 +54,20 @@
                 }
             });
         });
+        
+        $(function () {
+            $('#email').keydown(function (e) { 
+                if(e.which == 13) {
+                    $('#password').val() ? $('#login-submit').click() : $('#password').focus();
+                }
+            });
+
+            $('#password').keydown(function (e) { 
+                if(e.which == 13) {
+                    $('#email').val() ? $('#login-submit').click() : $('#email').focus();
+                }
+            });
+        });
     </script>
     @include('include/footer')
 </body>
