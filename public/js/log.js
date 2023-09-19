@@ -82,4 +82,8 @@ $(document).ready(function () {
         $("#loader").addClass("d-none");
         $("#loader").removeClass("d-flex");
     });
+
+    $(document).on("click", ".row-delete", function (e) {
+        $(this).parent().parent().remove();
+    });
 });

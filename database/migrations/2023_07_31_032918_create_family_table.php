@@ -16,12 +16,12 @@ class CreateFamilyTable extends Migration
         Schema::create('family', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('relation');
-            $table->text('name');
-            $table->text('pdob');
-            $table->text('age');
-            $table->text('gender');
-            $table->text('job');
+            $table->text('relation')->nullable();
+            $table->text('name')->nullable();
+            $table->text('pdob')->nullable();
+            $table->text('age')->nullable();
+            $table->text('gender')->nullable();
+            $table->text('job')->nullable();
             $table->timestamps();
         });
     }

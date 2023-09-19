@@ -13,13 +13,13 @@ class CreateEducationBackgroundTable extends Migration
      */
     public function up()
     {
-        Schema::create('education_background', function (Blueprint $table) {
+        Schema::create('education_backgrounds', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('name');
-            $table->text('location');
-            $table->date('enroll');
-            $table->date('graduate');
+            $table->text('name')->nullable();
+            $table->text('location')->nullable();
+            $table->text('enroll')->nullable();
+            $table->text('graduate')->nullable();
             $table->text('major')->nullable();
             $table->text('degree')->nullable();
             $table->timestamps();
@@ -34,5 +34,6 @@ class CreateEducationBackgroundTable extends Migration
     public function down()
     {
         Schema::dropIfExists('education_background');
+        Schema::dropIfExists('education_backgrounds');
     }
 }

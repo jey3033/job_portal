@@ -37,22 +37,50 @@
     </div>
 
     <script>
+        function checkValue() { 
+            if(!$('#email').val()){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'email tidak ada/kosong',
+                    text: 'harap mengisi email'
+                });
+                return false;
+            }
+            if(!$('#password').val()){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'password tidak ada/kosong',
+                    text: 'harap mengisi password'
+                });
+                return false;
+            }
+            return true;
+        }
+
         $('#login-submit').click(function (e) { 
             e.preventDefault();
-            $.ajax({
-                type: "post",
-                url: "/auth",
-                data: $('#login-form').serializeArray(),
-                statusCode: {
-                    200: function (response) {
-                        // console.log(response);
-                        window.location = "/dashboard";
-                    },
-                    422: function (response) {
-                        console.log(response);
+            let pass = checkValue();
+            if (pass) {
+                $.ajax({
+                    type: "post",
+                    url: "/auth",
+                    data: $('#login-form').serializeArray(),
+                    statusCode: {
+                        200: function (response) {
+                            window.location = "/dashboard";
+                        },
+                        422: function (response) {
+                            $('#email').addClass('is-invalid');
+                            $('#password').addClass('is-invalid');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Login Error',
+                                text: response.responseText
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }
         });
         
         $(function () {

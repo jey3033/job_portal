@@ -13,13 +13,13 @@ class CreateAchievementListTable extends Migration
      */
     public function up()
     {
-        Schema::create('achiev_list', function (Blueprint $table) {
+        Schema::create('achievement_lists', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('achievement');
-            $table->text('institution');
-            $table->text('year');
-            $table->text('description');
+            $table->text('achievement')->nullable();
+            $table->text('institution')->nullable();
+            $table->text('year')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
@@ -32,5 +32,6 @@ class CreateAchievementListTable extends Migration
     public function down()
     {
         Schema::dropIfExists('achiev_list');
+        Schema::dropIfExists('achievement_lists');
     }
 }

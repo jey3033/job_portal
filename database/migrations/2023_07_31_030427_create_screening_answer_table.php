@@ -13,27 +13,27 @@ class CreateScreeningAnswerTable extends Migration
      */
     public function up()
     {
-        Schema::create('screening_answer', function (Blueprint $table) {
+        Schema::create('screening_answers', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('other_benefits');
-            $table->text('work_contract');
-            $table->text('close_friend');
-            $table->text('company_knowledge');
-            $table->text('position_reason');
-            $table->text('position_knowledge');
-            $table->text('work_environment');
-            $table->text('long_plan');
-            $table->text('like_person');
-            $table->text('dislike_person');
-            $table->text('weakness');
-            $table->text('strength');
-            $table->text('leisure_time');
-            $table->text('topic');
-            $table->text('reference');
-            $table->text('reference_source');
-            $table->text('reference_connection');
-            $table->text('reference_phone');
+            $table->text('other_benefits')->nullable();
+            $table->text('work_contract')->nullable();
+            $table->text('close_friend')->nullable();
+            $table->text('company_knowledge')->nullable();
+            $table->text('position_reason')->nullable();
+            $table->text('position_knowledge')->nullable();
+            $table->text('work_environment')->nullable();
+            $table->text('long_plan')->nullable();
+            $table->text('like_person')->nullable();
+            $table->text('dislike_person')->nullable();
+            $table->text('weakness')->nullable();
+            $table->text('strength')->nullable();
+            $table->text('leisure_time')->nullable();
+            $table->text('topic')->nullable();
+            $table->text('reference')->nullable();
+            $table->text('reference_source')->nullable();
+            $table->text('reference_connection')->nullable();
+            $table->text('reference_phone')->nullable();
             $table->timestamps();
         });
     }
@@ -46,5 +46,6 @@ class CreateScreeningAnswerTable extends Migration
     public function down()
     {
         Schema::dropIfExists('screening_answer');
+        Schema::dropIfExists('screening_answers');
     }
 }

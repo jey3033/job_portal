@@ -38,6 +38,10 @@ input[type="number"]::-webkit-outer-spin-button {
     width: 16.66666667% !important;
 }
 
+.col-1half {
+    width: 12.5% !important;
+}
+
 /* Image Manipulation */
 .prev-image {
     max-width: 300px;
@@ -125,4 +129,15 @@ input[type="number"]::-webkit-outer-spin-button {
 /* Align Manipulation */
 .align-self-center {
     align-self: center;
+}
+
+/* Table Manipulation */
+.col-head {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.col-data {
+    margin-bottom: 10px;
 }

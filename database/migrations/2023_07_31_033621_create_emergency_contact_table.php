@@ -16,10 +16,10 @@ class CreateEmergencyContactTable extends Migration
         Schema::create('emergency_contact', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->string('name');
-            $table->string('address');
-            $table->string('relation');
-            $table->string('phone');
+            $table->string('name')->nullable();
+            $table->string('address')->nullable();
+            $table->string('relation')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }

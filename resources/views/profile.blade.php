@@ -12,6 +12,9 @@
             padding-right: unset;
             padding-left: unset;
         }
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-right: 0px;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +34,7 @@
                     <a class="nav-link" id="workexp" href="#" onclick="showCard('workexp')">Pengalaman Kerja</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="orgexp" href="#" onclick="showCard('orgexp')">Pengalaman Organisasi</a>
+                    <a class="nav-link" id="orghist" href="#" onclick="showCard('orghist')">Pengalaman Organisasi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="skills" href="#" onclick="showCard('skills')">Keterampilan</a>
@@ -234,25 +237,452 @@
             </form>
         </div>
         <div class="card-body" id="education-card">
-            data pendidikan
+            <button class="float-end btn btn-primary" id="education-add-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Add
+            </button>
+            <form id="education-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="education-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-md-2 col-head">Nama Instansi</div>
+                        <div class="col-md-4 col-head">Lokasi</div>
+                        <div class="col-md-1 col-head">Mulai</div>
+                        <div class="col-md-1 col-head">Selesai</div>
+                        <div class="col-md-2 col-head">Jurusan</div>
+                        <div class="col-md-1 col-head">Gelar</div>
+                    </div>
+                    @forelse ($education_background as $item)
+                    <div class="row">
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama Instansi" value="{{ $item->name }}">
+                        </div>
+                        <div class="col-md-4 col-data">
+                            <input class="form-control" type="text" name="location[]" placeholder="Lokasi" value="{{ $item->location }}">
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <select class="form-control monthyearpicker" name="enroll[]" value="{{ $item->enroll }}">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <select class="form-control monthyearpicker" name="graduate[]" value="{{ $item->graduate }}">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="major[]" placeholder="Jurusan" value="{{ $item->major }}">
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <input class="form-control" type="text" name="degree[]" placeholder="Gelar" value="{{ $item->degree }}">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    @empty
+                    @endforelse
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-edu">Simpan</button>
+                </div>
+            </form>
         </div>
         <div class="card-body" id="workexp-card">
-            pengalaman kerja
+            <button class="float-end btn btn-primary" id="workexp-add-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Add
+            </button>
+            <form id="workexp-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="workexp-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-1half col-head">Awal</div>
+                        <div class="col-1half col-head">Selesai</div>
+                        <div class="col-md-2 col-head">Nama Perusahaan</div>
+                        <div class="col-md-2 col-head">Jabatan</div>
+                        <div class="col-md-2 col-head">Gaji & Fasilitas</div>
+                        <div class="col-md-2 col-head">Alasan Berhenti</div>
+                    </div>
+                    @forelse ($work_experience as $item)
+                        <div class="row">
+                            <div class="col-1half col-data">
+                                <select class="form-control monthyearpicker" name="start[]" value="{{ explode(' - ',$item->period)[0] }}">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-1half col-data">
+                                <select class="form-control monthyearpicker" name="end[]" value="{{ explode(' - ',$item->period)[1] }}">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="name[]" placeholder="Nama Perusahaan" value="{{$item->name}}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="position[]" placeholder="Jabatan" value="{{$item->position}}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="net_benefits[]" placeholder="Gaji dan Fasilitas" value="{{$item->net_benefits}}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="leave_reason[]" placeholder="Alasan Berhenti" value="{{$item->leave_reason}}">
+                            </div>
+                            <div class="col-md-1 col-data text-white">
+                                <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div class="col-md-12 col-data">
+                                <textarea class="form-control" name="duties[]" placeholder="Tugas"> {{$item->duties}}</textarea>
+                            </div>
+                        </div>
+                    @empty
+                    @endforelse
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-workexp">Simpan</button>
+                </div>
+            </form>
         </div>
-        <div class="card-body" id="orgexp-card">
-            pengalaman organisasi
+        <div class="card-body" id="orghist-card">
+            <button class="float-end btn btn-primary" id="orghist-add-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Add
+            </button>
+            <form id="orghist-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="orghist-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-md-3 col-head">Nama Organisasi</div>
+                        <div class="col-md-2 col-head">Posisi</div>
+                        <div class="col-md-3 col-head">Tugas</div>
+                        <div class="col-md-3 col-head">Lokasi</div>
+                    </div>
+                    @forelse ($organization_history as $item)
+                        <div class="row">
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="name[]" placeholder="Nama Organisasi" value="{{ $item->name }}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="position[]" placeholder="Posisi" value="{{ $item->position }}">
+                            </div>
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="duties[]" placeholder="Tugas" value="{{ $item->duties }}">
+                            </div>
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="location[]" placeholder="Lokasi" value="{{ $item->locationname }}">
+                            </div>
+                            <div class="col-md-1 col-data text-white">
+                                <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    @empty
+                    @endforelse
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-orghist">Simpan</button>
+                </div>
+            </form>
         </div>
         <div class="card-body" id="skills-card">
             keterampilan
         </div>
         <div class="card-body" id="achievement-card">
-            prestasi
+            <button class="float-end btn btn-primary" id="achievement-add-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Add
+            </button>
+            <form id="achievement-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="achievement-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-md-3 col-head">Prestasi yang dicapai</div>
+                        <div class="col-md-3 col-head">Lembaga</div>
+                        <div class="col-md-1 col-head">Tahun</div>
+                        <div class="col-md-4 col-head">Keterangan</div>
+                    </div>
+                    @forelse ($achievement_list as $item)
+                        <div class="row">
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="achievement[]" placeholder="Prestasi yang dicapai" value="{{ $item->achievement }}">
+                            </div>
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="institution[]" placeholder="Lembaga" value="{{ $item->institution }}">
+                            </div>
+                            <div class="col-md-1 col-data">
+                                <select class="form-control yearpicker" name="year[]" value="{{ $item->year }}">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-data">
+                                <input class="form-control" type="text" name="description[]" placeholder="Keterangan" value="{{ $item->description }}">
+                            </div>
+                            <div class="col-md-1 col-data text-white">
+                                <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    @empty
+                    @endforelse
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-achievement">Simpan</button>
+                </div>
+            </form>
         </div>
         <div class="card-body" id="family-card">
             keluarga
         </div>
         <div class="card-body" id="misc-card">
-            lain lain
+            <form id="misc-form">
+                @csrf
+                <div class="mb-3 row">
+                    <input type="hidden" name="application_id" value="{{ $data->id }}">
+                    <label for="other_benefits" class="form-label col-2 text-start align-self-center mb-0">1. Sebutkan benefit dari perusahaan lain jika ada (incentive, bonus, kendaraan dinas, pulsa/HP)</label>
+                    <input type="text" class="form-control col" name="other_benefits" id="other_benefits" placeholder="" value="{{ $screening_answer->other_benefits }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="work_contract" class="form-label col-2 text-start align-self-center mb-0">2. Apakah Anda saat ini terikat kontrak kerja?</label>
+                    <input type="text" class="form-control col" name="work_contract" id="work_contract" placeholder="" value="{{ $screening_answer->work_contract }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="close_friend" class="form-label col-2 text-start align-self-center mb-0">3. Bila Anda menghadapi persoalan pribadi / pekerjaan, dengan siapakah biasanya Anda berdiskusi dan Mengapa?</label>
+                    <input type="text" class="form-control col" name="close_friend" id="close_friend" placeholder="" value="{{ $screening_answer->close_friend }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="company_knowledge" class="form-label col-2 text-start align-self-center mb-0">4. Apa yang Anda ketahui tentang Perusahaan kami?</label>
+                    <input type="text" class="form-control col" name="company_knowledge" id="company_knowledge" placeholder="" value="{{ $screening_answer->company_knowledge }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="position_reason" class="form-label col-2 text-start align-self-center mb-0">5. Mengapa Anda ingin bekerja pada jabatan yang Anda lamar?</label>
+                    <input type="text" class="form-control col" name="position_reason" id="position_reason" placeholder="" value="{{ $screening_answer->position_reason }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="position_knowledge" class="form-label col-2 text-start align-self-center mb-0">6.	Apa yang Anda ketahui tentang jabatan tersebut?</label>
+                    <input type="text" class="form-control col" name="position_knowledge" id="position_knowledge" placeholder="" value="{{ $screening_answer->position_knowledge }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="work_environment" class="form-label col-2 text-start align-self-center mb-0">7. Lingkungan pekerjaan seperti apa yang paling Anda sukai?</label>
+                    <input type="text" class="form-control col" name="work_environment" id="work_environment" placeholder="" value="{{ $screening_answer->work_environment }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="long_plan" class="form-label col-2 text-start align-self-center mb-0">8. Tuliskan rencana Anda dalam 5 tahun mendatang?</label>
+                    <input type="text" class="form-control col" name="long_plan" id="long_plan" placeholder="" value="{{ $screening_answer->long_plan }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="like_person" class="form-label col-2 text-start align-self-center mb-0">9. Tipe orang bagaimana yang paling Anda senangi?</label>
+                    <input type="text" class="form-control col" name="like_person" id="like_person" placeholder="" value="{{ $screening_answer->like_person }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="dislike_person" class="form-label col-2 text-start align-self-center mb-0">10. Tipe orang bagaimana yang paling Anda tidak sukai?</label>
+                    <input type="text" class="form-control col" name="dislike_person" id="dislike_person" placeholder="" value="{{ $screening_answer->dislike_person }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="weakness" class="form-label col-2 text-start align-self-center mb-0">11. Sebutkan beberapa kekurangan yang Anda miliki sehubungan dengan jabatan yang dilamar.</label>
+                    <input type="text" class="form-control col" name="weakness" id="weakness" placeholder="" value="{{ $screening_answer->weakness }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="strength" class="form-label col-2 text-start align-self-center mb-0">12. Sebutkan beberapa kelebihan yang Anda miliki sehubungan dengan jabatan yang dilamar</label>
+                    <input type="text" class="form-control col" name="strength" id="strength" placeholder="" value="{{ $screening_answer->strength }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="leisure_time" class="form-label col-2 text-start align-self-center mb-0">13. Bagaimana cara Anda mengisi waktu luang?</label>
+                    <input type="text" class="form-control col" name="leisure_time" id="leisure_time" placeholder="" value="{{ $screening_answer->leisure_time }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="topic" class="form-label col-2 text-start align-self-center mb-0">14.	Topik/artikel apa yang Anda senangi?</label>
+                    <input type="text" class="form-control col" name="topic" id="topic" placeholder="" value="{{ $screening_answer->topic }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="reference" class="form-label col-2 text-start align-self-center mb-0">15.	Apakah kami dapat meminta referensi mengenai pekerjaan Anda terdahulu? </label>
+                    <input type="text" class="form-control col" name="reference" id="reference" placeholder="" value="{{ $screening_answer->reference }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="reference_source" class="form-label col-2 text-start align-self-center mb-0">16.	Dari mana kami dapat memperoleh referensi tentang kerja Anda?</label>
+                    <input type="text" class="form-control col" name="reference_source" id="reference_source" placeholder="" value="{{ $screening_answer->reference_source }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="reference_connection" class="form-label col-2 text-start align-self-center mb-0">17.	Sebutkan nama dan hubungan dengan Anda dengan pemberi referensi?</label>
+                    <input type="text" class="form-control col" name="reference_connection" id="reference_connection" placeholder="" value="{{ $screening_answer->reference_connection }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="reference_phone" class="form-label col-2 text-start align-self-center mb-0">18. Sebutkan nomor telepon pemberi referensi?</label>
+                    <input type="text" class="form-control col" name="reference_phone" id="reference_phone" placeholder="" value="{{ $screening_answer->reference_phone }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="residence" class="form-label col-2 text-start align-self-center mb-0">19. Tempat tinggal</label>
+                    <div class="form-check col">
+                        <input class="form-check-input residence" name="residence" type="radio" value="private" id="private_residence"
+                        @if ($misc_answer->residence == 'private')
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="private_residence">
+                            Rumah Pribadi
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input residence" name="residence" type="radio" value="parent" id="parent_residence"
+                        @if ($misc_answer->residence == 'parent')
+                            checked
+                        @endif>
+                        <label class="form-check-label" for="parent_residence">
+                            Rumah Orang Tua
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input residence" name="residence" type="radio" value="lease" id="lease"
+                        @if ($misc_answer->residence == 'lease')
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="lease">
+                            Kontrak
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input residence" name="residence" type="radio" value="kos" id="homestay"
+                        @if ($misc_answer->residence == 'kos')
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="homestay">
+                            Kost
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input residence" name="residence" type="radio" value="other" id="residence_other"
+                        @if ($misc_answer->residence == 'other')
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="residence_other">
+                            <input class="form-input" id="residence_other_name" name="residence_other_name"
+                            @if (str_contains($misc_answer->residence, 'other'))
+                                value="{{$misc_answer->residence_other_name}}"
+                            @endif
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="transportation" class="form-label col-2 text-start align-self-center mb-0">20. Kendaraan apa yang dipergunakan untuk bekerja ?</label>
+                    {{-- <input type="text" class="form-control col" name="reference_phone" id="reference_phone" placeholder="" value="{{ $screening_answer->reference_phone }}"> --}}
+                    <div class="form-check col">
+                        <input class="form-check-input transportation" name="transportation[]" type="checkbox" value="car" id="car"
+                        @if (str_contains($misc_answer->transportation, 'car'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="car">
+                            Mobil
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input transportation" name="transportation[]" type="checkbox" value="motorcycle" id="motorcycle"
+                        @if (str_contains($misc_answer->transportation, 'motorcycle'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="motorcycle">
+                            Sepeda Motor
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input transportation" name="transportation[]" type="checkbox" value="bicycle" id="bicycle">
+                        <label class="form-check-label" for="bicycle"
+                        @if (str_contains($misc_answer->transportation, 'bicycle'))
+                            checked
+                        @endif
+                        >
+                            Sepeda
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input transportation" name="transportation[]" type="checkbox" value="other" id="transportation_other"
+                        @if (str_contains($misc_answer->transportation, 'other'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="transportation_other">
+                            Transportasi Umum, 
+                            <input class="form-input" id="transportation_other_name" name="transportation_other_name"
+                            @if (str_contains($misc_answer->transportation, 'other'))
+                                value="{{$misc_answer->transportation_other_name}}"
+                            @endif
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="driver_license" class="form-label col-2 text-start align-self-center mb-0">21. Apakah Anda memiliki Surat Ijin Mengemudi? Pilih salah satu dari opsi di bawah ini. Boleh lebih dari satu.</label>
+                    <div class="form-check col">
+                        <input class="form-check-input driver_license" name="driver_license[]" class="driver_license" type="checkbox" value="A" id="A"
+                        @if (str_contains($misc_answer->driver_license, 'A'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="A">
+                            A
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input driver_license" name="driver_license[]" class="driver_license" type="checkbox" value="C" id="C"
+                        @if (str_contains($misc_answer->driver_license, 'C'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="C">
+                            C
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input driver_license" name="driver_license[]" class="driver_license" type="checkbox" value="B1" id="B1"
+                        @if (str_contains($misc_answer->driver_license, 'B1'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="B1">
+                            B1
+                        </label>
+                    </div>
+                    <div class="form-check col">
+                        <input class="form-check-input driver_license" name="driver_license[]" class="driver_license" type="checkbox" value="B2" id="B2"
+                        @if (str_contains($misc_answer->driver_license, 'B2'))
+                            checked
+                        @endif
+                        >
+                        <label class="form-check-label" for="B2">
+                            B2
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="credit" class="form-label col-2 text-start align-self-center mb-0">22. Apakah Anda memiliki tanggungan atau cicilan? Jika YA sebutkan apa saja dan berapa besarnya? </label>
+                    <input type="text" class="form-control col" name="credit" id="credit" placeholder="" value="{{ $misc_answer->credit }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="financial_support" class="form-label col-2 text-start align-self-center mb-0">23. Apakah Anda masih mendapatkan bantuan keuangan ? Jika YA sebutkan dari mana dan berapa besarnya? </label>
+                    <input type="text" class="form-control col" name="financial_support" id="financial_support" placeholder="" value="{{ $misc_answer->financial_support }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="chronic_illness" class="form-label col-2 text-start align-self-center mb-0">24. Apakah Anda pernah menderita sakit kronis ? Apa dan kapan?</label>
+                    <input type="text" class="form-control col" name="chronic_illness" id="chronic_illness" placeholder="" value="{{ $misc_answer->chronic_illness }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="recurring_health_issues" class="form-label col-2 text-start align-self-center mb-0">25. Apakah Ada gangguan jasmani yang secara tetap mengganggu Anda?</label>
+                    <input type="text" class="form-control col" name="recurring_health_issues" id="recurring_health_issues" placeholder="" value="{{ $misc_answer->recurring_health_issues }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="work_date" class="form-label col-2 text-start align-self-center mb-0">26. Kapan Anda bisa mulai bekerja? </label>
+                    <input type="text" class="form-control col" name="work_date" id="work_date" placeholder="" value="{{ $misc_answer->work_date }}">
+                </div>
+                <div class="mb-3 row">
+                    <label for="benefit_expectation" class="form-label col-2 text-start align-self-center mb-0">27. Berapa Gaji dan Fasilitas yang Anda harapkan? </label>
+                    <input type="text" class="form-control col" name="benefit_expectation" id="benefit_expectation" placeholder="" value="{{ $misc_answer->benefit_expectation }}">
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-misc">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
     @endif
@@ -262,17 +692,115 @@
         if (!$('#profile_path').val()) {
             $('#preview_image').hide();
         }
+
         function preview() {
             $('#preview_image').show();
             frame.src = URL.createObjectURL(event.target.files[0]);
             console.log($('#profile_path').val())
         }
+
         function clearImage() {
             $('#preview_image').hide();
             document.getElementById('profile_path').value = null;
             frame.src = "";
         }
+
+        function monthyearpicker() {
+            var DateTime = luxon.DateTime;
+            $(".monthyearpicker").each(function (index, value) {
+                if (!$(this).hasClass("select2-hidden-accessible")) {
+                    for (let year = DateTime.local().year; year >= 1970; year--) {
+                        for (let month = 12; month > 0; month--) {
+                            let show = true;
+                            if (year == DateTime.local().year) {
+                                if (month > DateTime.local().month) {
+                                    show = false;
+                                }
+                            }
+                            if (show) {
+                                let date_object = DateTime.local(year, month);
+                                let date_to_show = date_object
+                                    .setLocale("id")
+                                    .toLocaleString({
+                                        month: "long",
+                                        year: "numeric",
+                                    });
+                                if ($(this).attr("value") == date_to_show) {
+                                    $(this).append(
+                                        `<option value="${date_to_show}" selected>${date_to_show}</option>`
+                                    );
+                                } else {
+                                    $(this).append(
+                                        `<option value="${date_to_show}">${date_to_show}</option>`
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    $(this).select2({
+                        allowClear: true,
+                        placeholder: "Pilih Tahun",
+                        containerCssClass: 'form-control',
+                    });
+                    $(this).next().css('width', '100%');
+                }
+            });
+        }
+
+        function yearpicker() {
+            var DateTime = luxon.DateTime;
+            $(".yearpicker").each(function (index, value) {
+                if (!$(this).hasClass("select2-hidden-accessible")) {
+                    for (let year = DateTime.local().year; year >= 1970; year--) {
+                        if ($(this).attr("value") == year) {
+                            $(this).append(
+                                `<option value="${year}" selected>${year}</option>`
+                            );
+                        } else {
+                            $(this).append(
+                                `<option value="${year}">${year}</option>`
+                            );
+                        }
+                    }
+                    $(this).select2({
+                        allowClear: true,
+                        placeholder: "Pilih Tahun",
+                        containerCssClass: 'form-control',
+                    });
+                    $(this).next().css('width', '100%');
+                }
+            });
+        }
+
+        function getMonthNumber(month_text) { 
+            if (month_text == 'Januari') {
+                return 1;
+            } else if (month_text == 'Februari') {
+                return 2;
+            } else if (month_text == 'Maret') {
+                return 3;
+            } else if (month_text == 'April') {
+                return 4;
+            } else if (month_text == 'Mei') {
+                return 5;
+            } else if (month_text == 'Juni') {
+                return 6;
+            } else if (month_text == 'Juli') {
+                return 7;
+            } else if (month_text == 'Agustus') {
+                return 8;
+            } else if (month_text == 'September') {
+                return 9;
+            } else if (month_text == 'Oktober') {
+                return 10;
+            } else if (month_text == 'November') {
+                return 11;
+            } else if (month_text == 'Desember') {
+                return 12;
+            }
+        }
     </script>
+    {{-- main profile script --}}
     <script>
         $(document).ready(function () {
             if ($('#prof-photo').attr('src')) {
@@ -321,7 +849,6 @@
             $('#save-btn').click(function (e) { 
                 e.preventDefault();
                 var submitdata = new FormData(document.getElementById('biodata-form'));
-                // console.log(submitdata);
                 $(`input`).removeClass('is-invalid');
                 $(`input`).removeClass('mb-0');
                 $.ajax({
@@ -353,6 +880,7 @@
             $('.card-body').hide();
             $('#biodata-card').show();
         });
+
         function showCard(params) {
             // e.preventDefault();
             $('.card-body').hide();
@@ -360,6 +888,396 @@
             $('#'+params).addClass('active');
             $('#'+params+'-card').show();
         }
+    </script>
+    
+    {{-- misc profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#save-misc').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('misc-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                $.ajax({
+                    type: "post",
+                    url: "/user/profile/storemisc",
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    enctype: "multipart/form-data",
+                    data: submitdata,
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) { 
+                        Swal.fire({
+                            icon: 'error',
+                            text: jqXHR.responseJSON.message
+                        }).then((result) => {
+                            array  = ['residence', 'transportation', 'driver_license'];
+                            $.each(jqXHR.responseJSON.errors, function (indexInArray, valueOfElement) {
+                                if (array.includes(indexInArray)) {
+                                    $(`.${indexInArray}`).addClass('is-invalid');
+                                    $(`.${indexInArray}`).addClass('mb-0');    
+                                }else {
+                                    $(`#${indexInArray}`).addClass('is-invalid');
+                                    $(`#${indexInArray}`).addClass('mb-0');
+                                }
+                            });
+                        })
+                    }
+                });
+            });
+        })
+    </script>
+
+    {{-- education profile script --}}
+    <script>
+        $(document).ready(function () {
+            monthyearpicker();
+
+            $('#education-add-row').click(function (e) {
+                $('#education-table-container').append(`
+                    <div class="row">
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama Instansi">
+                        </div>
+                        <div class="col-md-4 col-data">
+                            <input class="form-control" type="text" name="location[]" placeholder="Lokasi">
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <select class="form-control monthyearpicker" name="enroll[]">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <select class="form-control monthyearpicker" name="graduate[]">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="major[]" placeholder="Jurusan">
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <input class="form-control" type="text" name="degree[]" placeholder="Gelar">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+
+                monthyearpicker();
+            });
+
+            $('#save-edu').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('education-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkEdu();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeedu",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }else{}
+            });
+        });
+        
+        function checkEdu() {
+            let pass = true;
+            $('#education-form input').each(function (index, value) {
+                if(!$(this).val()){
+                    $(this).addClass('is-invalid');
+                    $(this).addClass('mb-0');
+                    pass = false;
+                }
+            })
+            if(!pass){
+                Swal.fire({
+                    icon: 'error',
+                    text: "Mohon mengisi data dengan lengkap"
+                })
+                return pass;
+            }
+            $('.monthyearpicker').each(function (index, value) {
+                if ($(this).attr('name') == 'enroll[]') {
+                    let date_text = $(this).select2('data')[0].text.split(" ");
+                    let month = getMonthNumber(date_text[0]);
+                    let date_object = luxon.DateTime.fromObject({month: month, year: date_text[1]});
+
+                    let grad_text = $(this).parent().next().find(".monthyearpicker").select2('data')[0].text.split(" ");
+                    let grad_month = getMonthNumber(grad_text[0]);
+                    let grad_object = luxon.DateTime.fromObject({month: grad_month, year: grad_text[1]});
+                    
+                    if(date_object > grad_object) {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'Bulan Masuk Melebihi Bulan Keluar'
+                        })
+                        pass = false;
+                    }
+                    
+                }
+            })
+            return pass;
+        }
+    </script>
+
+    {{-- work experience profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#workexp-add-row').click(function (e) {
+                $('#workexp-table-container').append(`
+                    <div class="row">
+                        <div class="col-1half col-data">
+                            <select class="form-control monthyearpicker" name="start[]">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-1half col-data">
+                            <select class="form-control monthyearpicker" name="end[]">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama Perusahaan">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="position[]" placeholder="Jabatan">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="net_benefits[]" placeholder="Gaji dan Fasilitas">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="leave_reason[]" placeholder="Alasan Berhenti">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-12 col-data">
+                            <textarea class="form-control" name="duties[]" placeholder="Tugas"></textarea>
+                        </div>
+                    </div>
+                `);
+                monthyearpicker();
+            });
+
+            $('#save-workexp').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('workexp-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkWorkExp();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeworkexp",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkWorkExp() {
+                let pass = true;
+                $('#workexp-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+
+                $('.monthyearpicker').each(function (index, value) {
+                    if ($(this).attr('name') == 'start[]') {
+                        let date_text = $(this).select2('data')[0].text.split(" ");
+                        let month = getMonthNumber(date_text[0]);
+                        let date_object = luxon.DateTime.fromObject({month: month, year: date_text[1]});
+
+                        let grad_text = $(this).parent().next().find(".monthyearpicker").select2('data')[0].text.split(" ");
+                        let grad_month = getMonthNumber(grad_text[0]);
+                        let grad_object = luxon.DateTime.fromObject({month: grad_month, year: grad_text[1]});
+                        
+                        if(date_object > grad_object) {
+                            Swal.fire({
+                                icon: 'error',
+                                text: 'Bulan Masuk Melebihi Bulan Keluar'
+                            })
+                            pass = false;
+                        }
+                        
+                    }
+                })
+                return pass;
+            }
+        });
+    </script>
+
+    {{-- history organisation profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#orghist-add-row').click(function (e) {
+                $('#orghist-table-container').append(`
+                    <div class="row">
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama Organisasi">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="position[]" placeholder="Posisi">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="duties[]" placeholder="Tugas">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="location[]" placeholder="Lokasi">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+            });
+
+            $('#save-orghist').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('orghist-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkOrgHist();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeorghist",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkOrgHist() {
+                let pass = true;
+                $('#orghist-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+                return pass;
+            }
+        });
+    </script>
+
+    {{-- achievement list profile script --}}
+    <script>
+        $(document).ready(function () {
+            yearpicker();
+
+            $('#achievement-add-row').click(function (e) {
+                $('#achievement-table-container').append(`
+                    <div class="row">
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="achievement[]" placeholder="Prestasi yang dicapai">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="institution[]" placeholder="Lembaga">
+                        </div>
+                        <div class="col-md-1 col-data">
+                            <select class="form-control yearpicker" name="year[]">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-data">
+                            <input class="form-control" type="text" name="description[]" placeholder="Keterangan">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+
+                yearpicker();
+            });
+
+            $('#save-achievement').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('achievement-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkAchievement();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeachievement",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkAchievement() {
+                let pass = true;
+                $('#achievement-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+                return pass;
+            }
+        });
     </script>
 </body>
 </html>

@@ -16,10 +16,10 @@ class CreateSkillsListTable extends Migration
         Schema::create('skill_list', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('skill');
-            $table->text('specification');
-            $table->text('level');
-            $table->text('certificate');
+            $table->text('skill')->nullable();
+            $table->text('specification')->nullable();
+            $table->text('level')->nullable();
+            $table->text('certificate')->nullable();
             $table->timestamps();
         });
     }

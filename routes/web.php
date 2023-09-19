@@ -49,4 +49,9 @@ Route::controller(JobOpeningController::class)->group(function() {
 Route::controller(JobApplicationController::class)->group(function() {
     Route::get('/user/profile', 'index');
     Route::post('/user/profile/store', 'store');
+    Route::post('/user/profile/storemisc', 'storemisc');
+    Route::post('/user/profile/storeedu', 'storeedu');
+    Route::post('/user/profile/storeworkexp', 'storeworkexp');
+    Route::post('/user/profile/storeorghist', 'storeorghist');
+    Route::post('/user/profile/storeachievement', 'storeachievement');
 });

@@ -13,16 +13,15 @@ class CreateWorkExperienceTable extends Migration
      */
     public function up()
     {
-        Schema::create('work_experience', function (Blueprint $table) {
+        Schema::create('work_experiences', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->date('start');
-            $table->date('end');
-            $table->string('name');
-            $table->string('position');
-            $table->text('net_benefits');
-            $table->text('leave_reason');
-            $table->text('duties');
+            $table->text('period')->nullable();
+            $table->string('name')->nullable();
+            $table->string('position')->nullable();
+            $table->text('net_benefits')->nullable();
+            $table->text('leave_reason')->nullable();
+            $table->text('duties')->nullable();
             $table->timestamps();
         });
     }
@@ -35,5 +34,6 @@ class CreateWorkExperienceTable extends Migration
     public function down()
     {
         Schema::dropIfExists('work_experience');
+        Schema::dropIfExists('work_experiences');
     }
 }

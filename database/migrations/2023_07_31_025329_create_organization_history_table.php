@@ -13,13 +13,13 @@ class CreateOrganizationHistoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('org_history', function (Blueprint $table) {
+        Schema::create('organization_histories', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('name');
-            $table->text('position');
-            $table->text('duties');
-            $table->text('location');
+            $table->text('name')->nullable();
+            $table->text('position')->nullable();
+            $table->text('duties')->nullable();
+            $table->text('location')->nullable();
             $table->timestamps();
         });
     }
@@ -32,5 +32,6 @@ class CreateOrganizationHistoryTable extends Migration
     public function down()
     {
         Schema::dropIfExists('org_history');
+        Schema::dropIfExists('organization_histories');
     }
 }

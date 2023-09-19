@@ -13,16 +13,18 @@ class CreateOtherAnswerTable extends Migration
      */
     public function up()
     {
-        Schema::create('other_answer', function (Blueprint $table) {
+        Schema::create('other_answers', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
-            $table->text('driver_license');
-            $table->text('credit');
-            $table->text('financial_support');
-            $table->text('chronic_illness');
-            $table->text('recurring_health_issues');
-            $table->text('work_date');
-            $table->text('benefit_expectation');
+            $table->text('residence')->nullable();
+            $table->text('transportation')->nullable();
+            $table->text('driver_license')->nullable();
+            $table->text('credit')->nullable();
+            $table->text('financial_support')->nullable();
+            $table->text('chronic_illness')->nullable();
+            $table->text('recurring_health_issues')->nullable();
+            $table->text('work_date')->nullable();
+            $table->text('benefit_expectation')->nullable();
             $table->timestamps();
         });
     }
@@ -35,5 +37,6 @@ class CreateOtherAnswerTable extends Migration
     public function down()
     {
         Schema::dropIfExists('other_answer');
+        Schema::dropIfExists('other_answers');
     }
 }
