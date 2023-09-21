@@ -409,7 +409,13 @@
                                 <input class="form-range" type="range" name="level[]" placeholder="Level" min="0" max="3" value="{{ $item->level }}">
                             </div>
                             <div class="col-md-3 col-data">
-                                <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat" value="{{ $item->certificate }}">
+                                <img src="{{ $item->certificate }}" alt="Certificate Photo" class="img-fluid mb-3 d-block">
+                                <input class="form-control col-8 d-inline" name="certificate[]" type="file" onchange="previewNext()">
+                                <button role="button" onclick="clearImageNext()" class="btn btn-danger col-3 align-self-center mb-0 ms-1"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                                <div class="text-center mb-3">
+                                    <img src="" class="img-fluid mt-3 prev-image" />
+                                </div>
+                                {{-- <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat" value="{{ $item->certificate }}"> --}}
                             </div>
                             <div class="col-md-1 col-data text-white">
                                 <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
@@ -929,6 +935,19 @@
             frame.src = URL.createObjectURL(event.target.files[0]);
             console.log($('#profile_path').val())
         }
+        
+        function previewNext() {
+            $(this).next().show();
+            $(this).next().find('img').attr('src', URL.createObjectURL(event.target.files[0]));
+            // console.log($('#profile_path').val())
+        }
+
+        function clearImageNext() {
+            $(this).next().hide();
+            $(this).prev()
+            $(this).next().find('img').attr('src', "");
+            // console.log($('#profile_path').val())
+        }
 
         function clearImage() {
             $('#preview_image').hide();
@@ -1129,48 +1148,6 @@
             $('#'+params).addClass('active');
             $('#'+params+'-card').show();
         }
-    </script>
-    
-    {{-- misc profile script --}}
-    <script>
-        $(document).ready(function () {
-            $('#save-misc').click(function (e) { 
-                e.preventDefault();
-                var submitdata = new FormData(document.getElementById('misc-form'));
-                $(`input`).removeClass('is-invalid');
-                $(`input`).removeClass('mb-0');
-                $.ajax({
-                    type: "post",
-                    url: "/user/profile/storemisc",
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    enctype: "multipart/form-data",
-                    data: submitdata,
-                    success: function (response) {
-                        console.log(response);
-                        location.reload();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) { 
-                        Swal.fire({
-                            icon: 'error',
-                            text: jqXHR.responseJSON.message
-                        }).then((result) => {
-                            array  = ['residence', 'transportation', 'driver_license'];
-                            $.each(jqXHR.responseJSON.errors, function (indexInArray, valueOfElement) {
-                                if (array.includes(indexInArray)) {
-                                    $(`.${indexInArray}`).addClass('is-invalid');
-                                    $(`.${indexInArray}`).addClass('mb-0');    
-                                }else {
-                                    $(`#${indexInArray}`).addClass('is-invalid');
-                                    $(`#${indexInArray}`).addClass('mb-0');
-                                }
-                            });
-                        })
-                    }
-                });
-            });
-        })
     </script>
 
     {{-- education profile script --}}
@@ -1379,7 +1356,7 @@
         });
     </script>
 
-    {{-- history organisation profile script --}}
+    {{-- organisation history profile script --}}
     <script>
         $(document).ready(function () {
             $('#orghist-add-row').click(function (e) {
@@ -1430,6 +1407,74 @@
             function checkOrgHist() {
                 let pass = true;
                 $('#orghist-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+                return pass;
+            }
+        });
+    </script>
+
+    {{-- skill list profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#skill-add-row').click(function (e) {
+                $('#skill-table-container').append(`
+                    <div class="row">
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="specification[]" placeholder="Lembaga">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-range" type="range" name="level[]" placeholder="Level" min="1" max="3">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+            });
+
+            $('#save-skill').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('skill-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkSkill();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeskill",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkSkill() {
+                let pass = true;
+                $('#skill-form input').each(function (index, value) {
                     if(!$(this).val()){
                         $(this).addClass('is-invalid');
                         $(this).addClass('mb-0');
@@ -1504,74 +1549,6 @@
             function checkAchievement() {
                 let pass = true;
                 $('#achievement-form input').each(function (index, value) {
-                    if(!$(this).val()){
-                        $(this).addClass('is-invalid');
-                        $(this).addClass('mb-0');
-                        pass = false;
-                    }
-                })
-                if(!pass) {
-                    Swal.fire({
-                        icon: 'error',
-                        text: "Mohon mengisi data dengan lengkap"
-                    })
-                }
-                return pass;
-            }
-        });
-    </script>
-
-    {{-- skill list profile script --}}
-    <script>
-        $(document).ready(function () {
-            $('#skill-add-row').click(function (e) {
-                $('#skill-table-container').append(`
-                    <div class="row">
-                        <div class="col-md-3 col-data">
-                            <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan">
-                        </div>
-                        <div class="col-md-3 col-data">
-                            <input class="form-control" type="text" name="specification[]" placeholder="Lembaga">
-                        </div>
-                        <div class="col-md-2 col-data">
-                            <input class="form-range" type="range" name="level[]" placeholder="Level" min="1" max="3">
-                        </div>
-                        <div class="col-md-3 col-data">
-                            <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat">
-                        </div>
-                        <div class="col-md-1 col-data text-white">
-                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                `);
-            });
-
-            $('#save-skill').click(function (e) { 
-                e.preventDefault();
-                var submitdata = new FormData(document.getElementById('skill-form'));
-                $(`input`).removeClass('is-invalid');
-                $(`input`).removeClass('mb-0');
-                let pass = checkSkill();
-                if(pass){
-                    $.ajax({
-                        type: "post",
-                        url: "/user/profile/storeskill",
-                        processData: false,
-                        contentType: false,
-                        cache: false,
-                        enctype: "multipart/form-data",
-                        data: submitdata,
-                        success: function (response) {
-                            console.log(response);
-                            location.reload();
-                        }
-                    });
-                }
-            });
-
-            function checkSkill() {
-                let pass = true;
-                $('#skill-form input').each(function (index, value) {
                     if(!$(this).val()){
                         $(this).addClass('is-invalid');
                         $(this).addClass('mb-0');
@@ -1680,6 +1657,48 @@
                 return pass;
             }
         });
+    </script>
+
+    {{-- misc profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#save-misc').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('misc-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                $.ajax({
+                    type: "post",
+                    url: "/user/profile/storemisc",
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    enctype: "multipart/form-data",
+                    data: submitdata,
+                    success: function (response) {
+                        console.log(response);
+                        location.reload();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) { 
+                        Swal.fire({
+                            icon: 'error',
+                            text: jqXHR.responseJSON.message
+                        }).then((result) => {
+                            array  = ['residence', 'transportation', 'driver_license'];
+                            $.each(jqXHR.responseJSON.errors, function (indexInArray, valueOfElement) {
+                                if (array.includes(indexInArray)) {
+                                    $(`.${indexInArray}`).addClass('is-invalid');
+                                    $(`.${indexInArray}`).addClass('mb-0');    
+                                }else {
+                                    $(`#${indexInArray}`).addClass('is-invalid');
+                                    $(`#${indexInArray}`).addClass('mb-0');
+                                }
+                            });
+                        })
+                    }
+                });
+            });
+        })
     </script>
 </body>
 </html>

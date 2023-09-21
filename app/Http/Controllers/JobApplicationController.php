@@ -356,7 +356,7 @@ class JobApplicationController extends Controller
                 $data->save();
             }
 
-            return response('Organization History Data Saved');
+            return response('Achievement Data Saved');
         } catch (\Throwable $th) {
             return response($th->getMessage(), 422);
         }
@@ -395,7 +395,46 @@ class JobApplicationController extends Controller
                 $data->save();
             }
 
-            return response('Organization History Data Saved');
+            return response('Family List Data Saved');
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 422);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param String $email
+     * @param  \App\Http\Requests\StoreJobApplicationRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeskill(Request $request) {
+        try {
+            $dataToSave = $request->validate([
+                'application_id' => 'required',
+                'skill' => 'array|required',
+                'specification' => 'array|required',
+                'level' => 'array|required',
+                'certificate' => 'array|required'
+            ]);
+
+            SkillList::where('application_id', $dataToSave['application_id'])->delete();
+
+            for ($i=0; $i < count($dataToSave['skill']); $i++) { 
+                $data = new SkillList();
+                $data->application_id = $dataToSave['application_id']; 
+                $data->skill = $dataToSave['skill'][$i];
+                $data->specification = $dataToSave['specification'][$i];
+                $data->level = $dataToSave['level'][$i];
+                if (isset($dataToSave['certificate'][$i])) {
+                    $imageName = time().'.'.$dataToSave['certificate'][$i]->extension();  
+                    $dataToSave['certificate'][$i]->move(public_path('images'), $imageName);
+                    $data->certificate = "/images/{$imageName}";
+                }
+                $data->save();
+            }
+
+            return response('Skill List Data Saved');
         } catch (\Throwable $th) {
             return response($th->getMessage(), 422);
         }
