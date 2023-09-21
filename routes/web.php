@@ -54,4 +54,5 @@ Route::controller(JobApplicationController::class)->group(function() {
     Route::post('/user/profile/storeworkexp', 'storeworkexp');
     Route::post('/user/profile/storeorghist', 'storeorghist');
     Route::post('/user/profile/storeachievement', 'storeachievement');
+    Route::post('/user/profile/storefamily', 'storefamily');
 });

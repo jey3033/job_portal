@@ -121,7 +121,7 @@
                         > Kong Hu Cu</option>
                     </select>
                     <label for="gender" class="form-label col-2 text-end align-self-center mb-0">Jenis Kelamin</label>
-                    <select name="gender" id="gender" class="form-control select2 col-4" placeholder="Pilih Jenis Kelamin">
+                    <select name="gender" id="gender" class="form-control gender col-4" placeholder="Pilih Jenis Kelamin">
                         <option value=""></option>
                         <option value="Pria"
                         @if ($data->gender == 'Pria')
@@ -384,7 +384,44 @@
             </form>
         </div>
         <div class="card-body" id="skills-card">
-            keterampilan
+            <button class="float-end btn btn-primary" id="skill-add-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Add
+            </button>
+            <form id="skill-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="skill-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-md-3 col-head">Keterampilan</div>
+                        <div class="col-md-3 col-head">Jenis Keterampilan</div>
+                        <div class="col-md-2 col-head">Level</div>
+                        <div class="col-md-3 col-head">Sertifikasi</div>
+                    </div>
+                    @forelse ($skill_list as $item)
+                        <div class="row">
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan" value="{{ $item->skill }}">
+                            </div>
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="text" name="specification[]" placeholder="Lembaga" value="{{ $item->specification }}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-range" type="range" name="level[]" placeholder="Level" min="0" max="3" value="{{ $item->level }}">
+                            </div>
+                            <div class="col-md-3 col-data">
+                                <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat" value="{{ $item->certificate }}">
+                            </div>
+                            <div class="col-md-1 col-data text-white">
+                                <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    @empty
+                    @endforelse
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-skill">Simpan</button>
+                </div>
+            </form>
         </div>
         <div class="card-body" id="achievement-card">
             <button class="float-end btn btn-primary" id="achievement-add-row">
@@ -429,7 +466,201 @@
             </form>
         </div>
         <div class="card-body" id="family-card">
-            keluarga
+            <button class="float-end btn btn-primary" id="family-add-sibling-row">
+                <i class="fa-solid fa-circle-plus me-1"></i>Tambah Saudara
+            </button>
+            @if ($data->marital_status != 'Lajang')
+                <button class="float-end btn btn-primary" id="family-add-child-row">
+                    <i class="fa-solid fa-circle-plus me-1"></i>Tambah Anak
+                </button>
+            @endif
+            <form id="family-form">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $data->id }}">
+                <div id="family-table-container" style="clear: both">
+                    <div class="row">
+                        <div class="col-md-1 col-head">Hubungan</div>
+                        <div class="col-md-2 col-head">Nama</div>
+                        <div class="col-md-2 col-head">Tempat, Tanggal Lahir</div>
+                        <div class="col-md-2 col-head">Usia</div>
+                        <div class="col-md-2 col-head">Jenis Kelamin</div>
+                        <div class="col-md-2 col-head">Pekerjaan</div>
+                    </div>
+                    <div id="up-family">
+                    @forelse ($family as $item)
+                        @if (in_array($item->relation, ['Ayah', 'Ibu', 'Saudara']))
+                        <div class="row">
+                            <div class="col-md-1 col-data">
+                                <input class="form-control" type="text" name="relation[]" value="{{ $item->relation }}" readonly>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="name[]" placeholder="Nama" value="{{ $item->name }}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir" value="{{ $item->pdob }}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="number" name="age[]" placeholder="Usia" value="{{ $item->age }}">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                @if ($item->relation == 'Ayah')
+                                    <input class="form-control" type="text" name="gender[]" value="Pria" readonly>
+                                @elseif ($item->relation == 'Ibu')
+                                    <input class="form-control" type="text" name="gender[]" value="Wanita" readonly>
+                                @else
+                                    <select name="gender[]" class="form-control gender col-4" placeholder="Pilih Jenis Kelamin">
+                                        <option value=""></option>
+                                        <option value="Pria"
+                                        @if ($item->gender == "Pria")
+                                            selected
+                                        @endif
+                                        >Pria</option>
+                                        <option value="Wanita"
+                                        @if ($item->gender == "Wanita")
+                                            selected
+                                        @endif
+                                        >Wanita</option>
+                                    </select>
+                                @endif
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan" value="{{ $item->job }}">
+                            </div>
+                        </div>
+                        @endif
+                    @empty
+                        <div class="row">
+                            <div class="col-md-1 col-data">
+                                <input class="form-control" type="text" name="relation[]" value="Ayah" readonly>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="name[]" placeholder="Nama">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="number" name="age[]" placeholder="Usia">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="gender[]" value="Pria" readonly>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 col-data">
+                                <input class="form-control" type="text" name="relation[]" value="Ibu" readonly>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="name[]" placeholder="Nama">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="number" name="age[]" placeholder="Usia">
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="gender[]" value="Wanita" readonly>
+                            </div>
+                            <div class="col-md-2 col-data">
+                                <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan">
+                            </div>
+                        </div>
+                    @endforelse
+                    </div>
+                    <div class="main-family">
+                    @forelse ($family as $item)
+                    @if (in_array($item->relation, ['Suami', 'Istri', 'Anak']))
+                    <div class="row">
+                        <div class="col-md-1 col-data">
+                            <input class="form-control" type="text" name="relation[]" value="{{ $item->relation }}" readonly>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama" value="{{ $item->name }}">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir" value="{{ $item->pdob }}">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="number" name="age[]" placeholder="Usia" value="{{ $item->age }}">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            @if ($item->relation == 'Suami')
+                                <input class="form-control" type="text" name="gender[]" value="Pria" readonly>
+                            @elseif ($item->relation == 'Istri')
+                                <input class="form-control" type="text" name="gender[]" value="Wanita" readonly>
+                            @else
+                                <select name="gender[]" class="form-control gender col-4" placeholder="Pilih Jenis Kelamin">
+                                    <option value=""></option>
+                                    <option value="Pria"
+                                    @if ($item->gender == "Pria")
+                                        selected
+                                    @endif
+                                    >Pria</option>
+                                    <option value="Wanita"
+                                    @if ($item->gender == "Wanita")
+                                        selected
+                                    @endif
+                                    >Wanita</option>
+                                </select>
+                            @endif
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan" value="{{ $item->job }}">
+                        </div>
+                    </div>
+                    @endif
+                    @empty
+                        @if ($data->marital_status != 'Lajang')
+                            <div id="main-family">
+                                <div class="row">
+                                    <div class="col-md-1 col-data">
+                                        @if ($data->gender == 'Pria')
+                                            <input class="form-control" type="text" name="relation[]" value="Istri" readonly>
+                                        @elseif ($data->gender == 'Wanita')
+                                            <input class="form-control" type="text" name="relation[]" value="Suami" readonly>
+                                        @else
+                                            <input class="form-control" type="text" name="relation[]">
+                                        @endif
+                                    </div>
+                                    <div class="col-md-2 col-data">
+                                        <input class="form-control" type="text" name="name[]" placeholder="Nama">
+                                    </div>
+                                    <div class="col-md-2 col-data">
+                                        <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir">
+                                    </div>
+                                    <div class="col-md-2 col-data">
+                                        <input class="form-control" type="number" name="age[]" placeholder="Usia">
+                                    </div>
+                                    <div class="col-md-2 col-data">
+                                        @if ($data->gender == 'Pria')
+                                            <input class="form-control" type="text" name="gender[]" value="Wanita" readonly>
+                                        @elseif ($data->gender == 'Wanita')
+                                            <input class="form-control" type="text" name="gender[]" value="Pria" readonly>
+                                        @else
+                                            <select name="gender[]" class="form-control gender col-4" placeholder="Pilih Jenis Kelamin">
+                                                <option value=""></option>
+                                                <option value="Pria"> Pria</option>
+                                                <option value="Wanita"> Wanita</option>
+                                            </select>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-2 col-data">
+                                        <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan">
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforelse
+                    </div>
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="button" class="btn btn-primary" id="save-family">Simpan</button>
+                </div>
+            </form>
         </div>
         <div class="card-body" id="misc-card">
             <form id="misc-form">
@@ -772,6 +1003,20 @@
             });
         }
 
+        function genderinit() {
+            $(".gender").each(function (index, value) {
+                if (!$(this).hasClass("select2-hidden-accessible")) {
+                    $(this).select2({
+                        allowClear: true,
+                        placeholder: "Pilih Jenis Kelamin",
+                        containerCssClass: 'form-control',
+                    }); 
+                    $('#up-family .gender').next().css('width', '100%');
+                    $('#main-family .gender').next().css('width', '100%');
+                }
+            });
+        }
+
         function getMonthNumber(month_text) { 
             if (month_text == 'Januari') {
                 return 1;
@@ -818,11 +1063,7 @@
                 placeholder: "Pilih Status Pernikahan"
             })
             
-            $('#gender').select2({
-                allowClear: true,
-                minimumResultsForSearch: Infinity,
-                placeholder: "Pilih Jenis Kelamin"
-            })
+            genderinit()
 
             $('#blood_type').select2({
                 allowClear: true,
@@ -1266,6 +1507,167 @@
                     if(!$(this).val()){
                         $(this).addClass('is-invalid');
                         $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+                return pass;
+            }
+        });
+    </script>
+
+    {{-- skill list profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#skill-add-row').click(function (e) {
+                $('#skill-table-container').append(`
+                    <div class="row">
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="text" name="specification[]" placeholder="Lembaga">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-range" type="range" name="level[]" placeholder="Level" min="1" max="3">
+                        </div>
+                        <div class="col-md-3 col-data">
+                            <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+            });
+
+            $('#save-skill').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('skill-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                let pass = checkSkill();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storeskill",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkSkill() {
+                let pass = true;
+                $('#skill-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                if(!pass) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: "Mohon mengisi data dengan lengkap"
+                    })
+                }
+                return pass;
+            }
+        });
+    </script>
+
+    {{-- family profile script --}}
+    <script>
+        $(document).ready(function () {
+            $('#family-add-sibling-row').click(function (e) { 
+                e.preventDefault();
+                $("#up-family").append(`
+                    <div class="row">
+                        <div class="col-md-1 col-data">
+                            <input class="form-control" type="text" name="relation[]" value="Saudara" readonly>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="name[]" placeholder="Nama">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="pdob[]" placeholder="Tempat, Tanggal Lahir">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="number" name="age[]" placeholder="Usia">
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <select name="gender[]" class="form-control gender col-4" placeholder="Pilih Jenis Kelamin">
+                                <option value=""></option>
+                                <option value="Pria">Pria</option>
+                                <option value="Wanita">Wanita</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-data">
+                            <input class="form-control" type="text" name="job[]" placeholder="Pekerjaan">
+                        </div>
+                        <div class="col-md-1 col-data text-white">
+                            <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `);
+                genderinit();
+            });
+
+            $('#save-family').click(function (e) { 
+                e.preventDefault();
+                var submitdata = new FormData(document.getElementById('family-form'));
+                $(`input`).removeClass('is-invalid');
+                $(`input`).removeClass('mb-0');
+                $('#family-form select').each(function (index, value) {
+                    if($(this).select2('data')[0].text){
+                        $(this).next().removeClass('is-invalid');
+                        $(this).next().removeClass('mb-0');
+                    }
+                })
+                let pass = checkFamily();
+                if(pass){
+                    $.ajax({
+                        type: "post",
+                        url: "/user/profile/storefamily",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        enctype: "multipart/form-data",
+                        data: submitdata,
+                        success: function (response) {
+                            console.log(response);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+
+            function checkFamily() {
+                let pass = true;
+                $('#family-form input').each(function (index, value) {
+                    if(!$(this).val()){
+                        $(this).addClass('is-invalid');
+                        $(this).addClass('mb-0');
+                        pass = false;
+                    }
+                })
+                $('#family-form select').each(function (index, value) {
+                    if(!$(this).select2('data')[0].text){
+                        $(this).next().addClass('is-invalid');
+                        $(this).next().addClass('mb-0');
                         pass = false;
                     }
                 })

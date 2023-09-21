@@ -7,9 +7,11 @@ use App\Http\Requests\StoreJobApplicationRequest;
 use App\Http\Requests\UpdateJobApplicationRequest;
 use App\Models\AchievementList;
 use App\Models\EducationBackground;
+use App\Models\Family;
 use App\Models\OrganizationHistory;
 use App\Models\OtherAnswer;
 use App\Models\ScreeningAnswer;
+use App\Models\SkillList;
 use App\Models\User;
 use App\Models\WorkExperience;
 use CreateEducationBackgroundTable;
@@ -48,8 +50,12 @@ class JobApplicationController extends Controller
         $work_experience = WorkExperience::where("application_id", $data->id)->get();
         
         $organization_history = OrganizationHistory::where("application_id", $data->id)->get();
-        
+
         $achievement_list = AchievementList::where("application_id", $data->id)->get();
+
+        $skill_list = SkillList::where("application_id", $data->id)->get();
+
+        $family = Family::where("application_id", $data->id)->get();
         
         $misc_answer = new OtherAnswer();
         if (OtherAnswer::where("application_id", $data->id)->count() > 0) {
@@ -77,6 +83,8 @@ class JobApplicationController extends Controller
             'work_experience' => $work_experience, 
             'organization_history' => $organization_history,
             'achievement_list' => $achievement_list,
+            'skill_list' => $skill_list,
+            'family' => $family,
             'Title' => "Biodata Anda"
         ]);
     }
@@ -345,6 +353,45 @@ class JobApplicationController extends Controller
                 $data->institution = $dataToSave['institution'][$i];
                 $data->year = $dataToSave['year'][$i];
                 $data->description = $dataToSave['description'][$i];
+                $data->save();
+            }
+
+            return response('Organization History Data Saved');
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 422);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param String $email
+     * @param  \App\Http\Requests\StoreJobApplicationRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storefamily(Request $request) {
+        try {
+            $dataToSave = $request->validate([
+                'application_id' => 'required',
+                'relation' => 'array|required',
+                'name' => 'array|required',
+                'pdob' => 'array|required',
+                'age' => 'array|required',
+                'gender' => 'array|required',
+                'job' => 'array|required'
+            ]);
+
+            Family::where('application_id', $dataToSave['application_id'])->delete();
+
+            for ($i=0; $i < count($dataToSave['relation']); $i++) { 
+                $data = new Family();
+                $data->application_id = $dataToSave['application_id']; 
+                $data->relation = $dataToSave['relation'][$i];
+                $data->name = $dataToSave['name'][$i];
+                $data->pdob = $dataToSave['pdob'][$i];
+                $data->age = $dataToSave['age'][$i];
+                $data->gender = $dataToSave['gender'][$i];
+                $data->job = $dataToSave['job'][$i];
                 $data->save();
             }
 

@@ -13,7 +13,7 @@ class CreateFamilyTable extends Migration
      */
     public function up()
     {
-        Schema::create('family', function (Blueprint $table) {
+        Schema::create('families', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
             $table->text('relation')->nullable();
@@ -34,5 +34,6 @@ class CreateFamilyTable extends Migration
     public function down()
     {
         Schema::dropIfExists('family');
+        Schema::dropIfExists('families');
     }
 }

@@ -13,7 +13,7 @@ class CreateSkillsListTable extends Migration
      */
     public function up()
     {
-        Schema::create('skill_list', function (Blueprint $table) {
+        Schema::create('skill_lists', function (Blueprint $table) {
             $table->id();
             $table->integer('application_id');
             $table->text('skill')->nullable();
@@ -32,5 +32,6 @@ class CreateSkillsListTable extends Migration
     public function down()
     {
         Schema::dropIfExists('skill_list');
+        Schema::dropIfExists('skill_lists');
     }
 }
