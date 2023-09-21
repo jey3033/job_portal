@@ -399,25 +399,22 @@
                     </div>
                     @forelse ($skill_list as $item)
                         <div class="row">
-                            <div class="col-md-3 col-data">
+                            <div class="col-md-3 align-self-center col-data">
+                                <input type="hidden" name="id[]" value="{{ $item->id }}">
                                 <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan" value="{{ $item->skill }}">
                             </div>
-                            <div class="col-md-3 col-data">
+                            <div class="col-md-3 align-self-center col-data">
                                 <input class="form-control" type="text" name="specification[]" placeholder="Lembaga" value="{{ $item->specification }}">
                             </div>
-                            <div class="col-md-2 col-data">
-                                <input class="form-range" type="range" name="level[]" placeholder="Level" min="0" max="3" value="{{ $item->level }}">
+                            <div class="col-md-2 align-self-center col-data">
+                                <input class="form-range" type="range" name="level[]" placeholder="Level" min="1" max="3" value="{{ $item->level }}">
                             </div>
-                            <div class="col-md-3 col-data">
+                            <div class="col-md-3 align-self-center col-data">
                                 <img src="{{ $item->certificate }}" alt="Certificate Photo" class="img-fluid mb-3 d-block">
-                                <input class="form-control col-8 d-inline" name="certificate[]" type="file" onchange="previewNext()">
-                                <button role="button" onclick="clearImageNext()" class="btn btn-danger col-3 align-self-center mb-0 ms-1"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                                <div class="text-center mb-3">
-                                    <img src="" class="img-fluid mt-3 prev-image" />
-                                </div>
+                                <input class="form-control col-12 d-inline" name="certificate[]" type="file" onchange="previewNext()">
                                 {{-- <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat" value="{{ $item->certificate }}"> --}}
                             </div>
-                            <div class="col-md-1 col-data text-white">
+                            <div class="col-md-1 align-self-center col-data text-white">
                                 <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
@@ -937,16 +934,9 @@
         }
         
         function previewNext() {
-            $(this).next().show();
-            $(this).next().find('img').attr('src', URL.createObjectURL(event.target.files[0]));
-            // console.log($('#profile_path').val())
-        }
-
-        function clearImageNext() {
-            $(this).next().hide();
-            $(this).prev()
-            $(this).next().find('img').attr('src', "");
-            // console.log($('#profile_path').val())
+            let url = URL.createObjectURL(event.target.files[0]);
+            event.target.previousElementSibling.src = url;
+            // console.log(event.target.previousElementSibling.src);
         }
 
         function clearImage() {
@@ -1430,19 +1420,20 @@
             $('#skill-add-row').click(function (e) {
                 $('#skill-table-container').append(`
                     <div class="row">
-                        <div class="col-md-3 col-data">
+                        <div class="col-md-3 align-self-center col-data">
                             <input class="form-control" type="text" name="skill[]" placeholder="Ketrampilan">
                         </div>
-                        <div class="col-md-3 col-data">
+                        <div class="col-md-3 align-self-center col-data">
                             <input class="form-control" type="text" name="specification[]" placeholder="Lembaga">
                         </div>
-                        <div class="col-md-2 col-data">
+                        <div class="col-md-2 align-self-center col-data">
                             <input class="form-range" type="range" name="level[]" placeholder="Level" min="1" max="3">
                         </div>
-                        <div class="col-md-3 col-data">
-                            <input class="form-control" type="file" name="certificate[]" placeholder="Sertifikat">
+                        <div class="col-md-3 align-self-center col-data">
+                            <img src="" alt="Certificate Photo" class="img-fluid mb-3 d-block">
+                            <input class="form-control col-12 d-inline" name="certificate[]" type="file" onchange="previewNext()">
                         </div>
-                        <div class="col-md-1 col-data text-white">
+                        <div class="col-md-1 align-self-center col-data text-white">
                             <button class="btn btn-danger row-delete" type="button"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -1475,10 +1466,12 @@
             function checkSkill() {
                 let pass = true;
                 $('#skill-form input').each(function (index, value) {
-                    if(!$(this).val()){
-                        $(this).addClass('is-invalid');
-                        $(this).addClass('mb-0');
-                        pass = false;
+                    if(!$(this).parent().parent().find("input[name='id']")){
+                        if(!$(this).val()){
+                            $(this).addClass('is-invalid');
+                            $(this).addClass('mb-0');
+                            pass = false;
+                        }
                     }
                 })
                 if(!pass) {

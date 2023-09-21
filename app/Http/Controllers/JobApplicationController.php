@@ -412,26 +412,39 @@ class JobApplicationController extends Controller
         try {
             $dataToSave = $request->validate([
                 'application_id' => 'required',
-                'skill' => 'array|required',
-                'specification' => 'array|required',
-                'level' => 'array|required',
-                'certificate' => 'array|required'
+                'skill' => 'required',
+                'specification' => 'required',
+                'level' => 'required',
             ]);
 
-            SkillList::where('application_id', $dataToSave['application_id'])->delete();
+            SkillList::where('application_id', $dataToSave['application_id'])->whereNotIn('id', $request['id'])->delete();
 
             for ($i=0; $i < count($dataToSave['skill']); $i++) { 
-                $data = new SkillList();
-                $data->application_id = $dataToSave['application_id']; 
-                $data->skill = $dataToSave['skill'][$i];
-                $data->specification = $dataToSave['specification'][$i];
-                $data->level = $dataToSave['level'][$i];
-                if (isset($dataToSave['certificate'][$i])) {
-                    $imageName = time().'.'.$dataToSave['certificate'][$i]->extension();  
-                    $dataToSave['certificate'][$i]->move(public_path('images'), $imageName);
-                    $data->certificate = "/images/{$imageName}";
+                if (isset($request['id'][$i])) {
+                    $data = SkillList::where('id', $request['id'][$i])->first();
+                    $data->application_id = $dataToSave['application_id']; 
+                    $data->skill = $dataToSave['skill'][$i];
+                    $data->specification = $dataToSave['specification'][$i];
+                    $data->level = $dataToSave['level'][$i];
+                    if (isset($request['certificate'][$i])) {
+                        $imageName = time().'.'.$request['certificate'][$i]->extension();  
+                        $request['certificate'][$i]->move(public_path('images'), $imageName);
+                        $data->certificate = "/images/{$imageName}";
+                    }
+                    $data->save();
+                }else{
+                    $data = new SkillList();
+                    $data->application_id = $dataToSave['application_id']; 
+                    $data->skill = $dataToSave['skill'][$i];
+                    $data->specification = $dataToSave['specification'][$i];
+                    $data->level = $dataToSave['level'][$i];
+                    if (isset($request['certificate'][$i])) {
+                        $imageName = time().'.'.$request['certificate'][$i]->extension();  
+                        $request['certificate'][$i]->move(public_path('images'), $imageName);
+                        $data->certificate = "/images/{$imageName}";
+                    }
+                    $data->save();
                 }
-                $data->save();
             }
 
             return response('Skill List Data Saved');
